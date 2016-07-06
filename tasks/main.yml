@@ -1,8 +1,19 @@
 ---
-- name: apt-get update
-  apt: update_cache=true cache_valid_time=3600
-  sudo: yes
+- include: Debian.yml
+  when: ansible_os_family == 'Debian'
+
+- include: RedHat.yml
+  when: ansible_os_family == 'RedHat'
 
 - name: install zsh
-  apt: name=zsh
+  action: "{{backcompat_pkg_mgr}} name=zsh"
   sudo: yes
+  when: backcompat_pkg_mgr == "yum" or backcompat_pkg_mgr == "apt"
+
+# Use command since dnf was only added as a module in ansible 1.9.0
+- name: install zsh
+  command: dnf install -y zsh
+  args:
+    creates: /bin/zsh
+  sudo: yes
+  when: backcompat_pkg_mgr == "dnf"
