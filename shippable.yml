@@ -1,0 +1,17 @@
+language: none
+sudo: required
+
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -y ansible
+
+script:
+  - >
+    true
+
+
+#after_failure:
+#  - cat role-tester-ansible-master/.kitchen/logs/*.log | grep -v '^I, '
+
+notifications:
+  webhooks: https://galaxy.ansible.com/api/v1/notifications/
