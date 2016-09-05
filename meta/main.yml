@@ -18,7 +18,7 @@ galaxy_info:
     - precise
     - trusty
     - wily
-  categories:
+  galaxy_tags:
   - shell
 dependencies: []
   # List your role dependencies here, one per line. Only
