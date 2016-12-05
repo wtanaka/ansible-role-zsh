@@ -1,29 +1,25 @@
 language: ruby
 rvm:
-  - 2.2
-  - 2.1
-  - 2.0
-  - 1.9.3
-
+- 2.2
+- 2.1
+- 2.0
+- 1.9.3
 sudo: required
-
 services:
-  - docker
-
+- docker
 before_install:
-  - sudo apt-get update -qq
-  - sudo apt-get install -y ansible
-
+- sudo apt-get update -qq
+- sudo apt-get install -y ansible
 script:
-  - >
-    wget -O- bit.ly/ansibletest | env
-    DOCKER_IMAGES="ubuntu:12.04 ubuntu:14.04 ubuntu:16.04 fedora:20 fedora:24"
-    ANSIBLE_VERSIONS="1.5.4 1.6.1 1.7.2 1.8.4 1.9.2 2.0.0.2 2.1.0.0"
-    sh
-
-
+- >
+  wget -O- bit.ly/ansibletest | env
+  DOCKER_IMAGES="ubuntu:12.04 ubuntu:14.04 ubuntu:16.04 fedora:20
+  fedora:24"
+  ANSIBLE_VERSIONS="1.5.4 1.6.1 1.7.2 1.8.4 1.9.2 2.0.0.2 2.1.0.0"
+  sh
 after_failure:
-  - cat role-tester-ansible-master/.kitchen/logs/*.log | grep -v '^I, '
-
+- cat role-tester-ansible-master/.kitchen/logs/*.log | grep -v '^I, '
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/
+  slack:
+    secure: IT2zGlmzQ3YNJwceASItG5SRuQXNTx/wVkrk9sK9bdJHXLPQUF44GT/Don1jqWjHt79NMpByuEH9oZUfz3PyOAxs+W2bhsD9b/YIIogkTiExEqapog+2PLHgFxHzZ2ghDxHFYJ6JlSIMd7WUdM2cbl4Ymk1woKAr5UASXri/mnrMMP6jmlwQLmxughz1UifieHd8LBGKHCc8hIpeUeNVMtPg7ZSwGJ5CrJ8sk/BkT/7zDTiC98uv7Jr92iqB0sVTH1kjlpFjrwgG4OBW6bQoXUIBhuPoyhPwjmKXddGwN+6gmSAEYyg9oX/oj1YXNvcgZw/InW/ggO9OFTTr10/FXoaX3nTymSwYXYswmZbYjf83ezb04k3vbW/G2mJL4EwUANr24Izx4Oon13lf4HlNxNCMM1wPD2JDZd2ByWIU+y3BmTdpNKCZudBgBICJ/CysVZ56CquoAnZwldZg4Dz+4NfV/Ps7+DH3WXucOlfb0Uh/DVm68+pphUvD4SYunXyp03tncKGyo4/sf5s3gVhWYCvQvalNSNtVUoHBy0UXhPu5phhbCAWMt2IKoC5p+7tb44XnaUfguaEOltcR0Uv6UKKPBtV9Oscosu8mRhVr4qHGbVSFktYy3exms1q7mVi5u44g9zjr1Riqa48visoZkgKlbX4RTub1+o10cBel2ZQ=
