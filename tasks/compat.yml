@@ -8,6 +8,12 @@
           (apt-get install -y python-apt ||
              (apt-get update -qq && apt-get install -y python-apt)));
     fi
+  register: result_python_apt
+  until: result_python_apt|success
+  # Workaround https://github.com/ansible/ansible/issues/16868 and
+  # increase default retry count
+  retries: 20
+  delay: 10
   when: should_run and ansible_os_family == 'Debian'
   changed_when: False
 
@@ -20,6 +26,12 @@
           (apt-get install -y python-pycurl ||
              (apt-get update -qq && apt-get install -y python-pycurl)));
     fi
+  register: result_python_pycurl
+  until: result_python_pycurl|success
+  # Workaround https://github.com/ansible/ansible/issues/16868 and
+  # increase default retry count
+  retries: 20
+  delay: 10
   when: should_run and ansible_os_family == 'Debian'
   changed_when: False
 
@@ -30,6 +42,12 @@
        python -c "import yum" ||
        (> /dev/null command -v yum && ! > /dev/null command -v dnf && yum install -y python2-yum);
     fi
+  register: result_python_yum
+  until: result_python_yum|success
+  # Workaround https://github.com/ansible/ansible/issues/16868 and
+  # increase default retry count
+  retries: 20
+  delay: 10
   when: should_run and ansible_os_family == 'RedHat'
   changed_when: False
 
@@ -40,6 +58,12 @@
        python -c "import dnf" ||
        (> /dev/null command -v dnf && dnf install -y python2-dnf);
     fi
+  register: result_python_dnf
+  until: result_python_dnf|success
+  # Workaround https://github.com/ansible/ansible/issues/16868 and
+  # increase default retry count
+  retries: 20
+  delay: 10
   when: should_run and ansible_os_family == 'RedHat'
   changed_when: False
 
@@ -64,14 +88,20 @@
     backcompat_pkg_mgr: '{{ansible_pkg_mgr}}'
   when: should_run and ansible_os_family == 'Debian'
 
+# When adding a 4th paramter ",0" to truncate(), CircleCI fails with
+# "an unexpected type error occured. Error was do_truncate() takes at
+# most 4 arguments (5 given)"
 - set_fact:
     ansible_distribution_major_version: >
-      {{ansible_distribution_version|truncate(2,true,'',0)|replace(".", " ")|trim|float|int|string}}
+      {{ansible_distribution_version|truncate(2,true,'')|replace(".", " ")|trim|float|int|string}}
   when: should_run and ansible_distribution_major_version is not defined
 
+# When adding a 4th paramter ",0" to truncate(), CircleCI fails with
+# "an unexpected type error occured. Error was do_truncate() takes at
+# most 4 arguments (5 given)"
 - set_fact:
     ansible_distribution_major_version: >
-      {{ansible_distribution_version|truncate(4,true,'',0)|replace("."," ")|trim|float|int|string}}
+      {{ansible_distribution_version|truncate(4,true,'')|replace("."," ")|trim|float|int|string}}
   when: should_run and ansible_distribution_major_version is not defined or not ansible_distribution_major_version
 
 - name: check for wget
@@ -84,6 +114,12 @@
 # Install wget due to https://github.com/ansible/ansible/issues/12161
 - name: install wget with non-dnf
   action: "{{backcompat_pkg_mgr}} name=wget"
+  register: result_wget
+  until: result_wget|success
+  # Workaround https://github.com/ansible/ansible/issues/16868 and
+  # increase default retry count
+  retries: 20
+  delay: 10
   sudo: yes
   when: >
     should_run and
@@ -94,6 +130,12 @@
 # Use command since dnf was only added as a module in ansible 1.9.0
 - name: install wget with dnf
   command: dnf install -y wget
+  register: result_wget_dnf
+  until: result_wget_dnf|success
+  # Workaround https://github.com/ansible/ansible/issues/16868 and
+  # increase default retry count
+  retries: 20
+  delay: 10
   args:
     creates: /usr/bin/wget
   sudo: yes
